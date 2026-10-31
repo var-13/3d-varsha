@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CMake Configure (Debug)",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "-S", "${workspaceFolder}",
+        "-B", "${workspaceFolder}/build",
+        "-G", "Ninja",
+        "-DCMAKE_BUILD_TYPE=Debug"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "CMake Build",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["--build", "${workspaceFolder}/build", "--parallel"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "build", "isDefault": true },
+      "dependsOn": "CMake Configure (Debug)",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "${workspaceFolder}/build/bin/RunTests.exe",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "dependsOn": "CMake Build",
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Launch ThermoBench",
+      "type": "shell",
+      "command": "${workspaceFolder}/build/bin/Launch.exe",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "none",
+      "dependsOn": "CMake Build",
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    }
+  ]
+}

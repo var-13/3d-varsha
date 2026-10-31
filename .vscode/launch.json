@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch ThermoBench (server + browser)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/Launch.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+      "preLaunchTask": "CMake Build",
+      "externalConsole": true,
+      "stopAtEntry": false
+    },
+    {
+      "name": "Debug: ThermoBench Server",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/ThermoBenchServer.exe",
+      "args": ["ui", "8080"],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+      "preLaunchTask": "CMake Build",
+      "externalConsole": true,
+      "stopAtEntry": false
+    },
+    {
+      "name": "Debug: Run Tests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/RunTests.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+      "preLaunchTask": "CMake Build",
+      "externalConsole": true,
+      "stopAtEntry": false
+    }
+  ]
+}

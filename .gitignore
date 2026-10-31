@@ -1,0 +1,25 @@
+# Build artefacts
+build/
+out/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Compiled binaries
+*.exe
+*.dll
+*.lib
+*.a
+*.o
+*.obj
+
+# VS Code local settings (keep launch/tasks)
+.vscode/*.log
+
+# Results (large generated files)
+results/*.csv
+
+# OS artefacts
+.DS_Store
+Thumbs.db

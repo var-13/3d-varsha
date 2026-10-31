@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d0f14"/>
+      <stop offset="100%" stop-color="#151820"/>
+    </linearGradient>
+    <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title & Subtitle -->
+  <text x="400" y="38" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#f0f2f8">ThermoBench — Backpropagation Loss Convergence</text>
+  <text x="400" y="58" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#8b93a8">Architecture: 1-1-1 (x=1.0, target y=2.0, lr=0.1, 100 iterations)</text>
+
+  <!-- Chart Area: x: 80 to 740 (width 660), y: 90 to 420 (height 330) -->
+  <!-- Grid Lines -->
+  <g stroke="rgba(255,255,255,0.07)" stroke-dasharray="4,4">
+    <line x1="80" y1="420" x2="740" y2="420"/>
+    <line x1="80" y1="337" x2="740" y2="337"/>
+    <line x1="80" y1="255" x2="740" y2="255"/>
+    <line x1="80" y1="172" x2="740" y2="172"/>
+    <line x1="80" y1="90"  x2="740" y2="90"/>
+
+    <line x1="80"  y1="90" x2="80"  y2="420"/>
+    <line x1="212" y1="90" x2="212" y2="420"/>
+    <line x1="344" y1="90" x2="344" y2="420"/>
+    <line x1="476" y1="90" x2="476" y2="420"/>
+    <line x1="608" y1="90" x2="608" y2="420"/>
+    <line x1="740" y1="90" x2="740" y2="420"/>
+  </g>
+
+  <!-- Axes -->
+  <line x1="80" y1="420" x2="740" y2="420" stroke="#2a3048" stroke-width="2"/>
+  <line x1="80" y1="90"  x2="80"  y2="420" stroke="#2a3048" stroke-width="2"/>
+
+  <!-- Y-Axis Labels (Loss J) -->
+  <g font-family="Inter, system-ui, sans-serif" font-size="11" fill="#8b93a8" text-anchor="end">
+    <text x="70" y="424">0.00</text>
+    <text x="70" y="341">0.30</text>
+    <text x="70" y="259">0.60</text>
+    <text x="70" y="176">0.90</text>
+    <text x="70" y="94">1.20</text>
+  </g>
+  <text x="25" y="255" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600" fill="#f0f2f8" transform="rotate(-90, 25, 255)" text-anchor="middle">Loss J = 0.5·(ŷ − y)²</text>
+
+  <!-- X-Axis Labels (Step) -->
+  <g font-family="Inter, system-ui, sans-serif" font-size="11" fill="#8b93a8" text-anchor="middle">
+    <text x="80"  y="442">0</text>
+    <text x="212" y="442">20</text>
+    <text x="344" y="442">40</text>
+    <text x="476" y="442">60</text>
+    <text x="608" y="442">80</text>
+    <text x="740" y="442">100</text>
+  </g>
+  <text x="410" y="472" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600" fill="#f0f2f8" text-anchor="middle">Training Iteration Step</text>
+
+  <!-- Loss Curve (Plotting actual calculated coordinates) -->
+  <!-- step 0: (80, 94.8), step 1: (86.6, 231.4), step 2: (93.2, 305.4), step 5: (113, 392.1), step 10: (146, 417.2), step 20: (212, 419.9), step 100: (740, 420) -->
+  <path d="M 80,94.8 
+           Q 105,280 146,417.2 
+           T 212,419.9 
+           L 740,420" 
+        fill="none" stroke="url(#curveGrad)" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Key Data Callout Circles -->
+  <!-- Step 0 -->
+  <circle cx="80" cy="94.8" r="5" fill="#f97316" stroke="#fff" stroke-width="1.5"/>
+  <rect x="95" y="85" width="165" height="42" fill="#1c2030" stroke="#2a3048" rx="6"/>
+  <text x="105" y="102" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#f97316">Step 0 (Initial)</text>
+  <text x="105" y="118" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#f0f2f8">J₀ = 1.1825, ŷ₀ = 0.4621</text>
+
+  <!-- Step 1 -->
+  <circle cx="86.6" cy="231.4" r="4.5" fill="#ea580c" stroke="#fff" stroke-width="1.5"/>
+  <rect x="125" y="215" width="180" height="42" fill="#1c2030" stroke="#2a3048" rx="6"/>
+  <text x="135" y="232" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#ea580c">Step 1 (First Update)</text>
+  <text x="135" y="248" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#f0f2f8">J₁ = 0.6858, ŷ₁ = 0.8289</text>
+
+  <!-- Step 10 -->
+  <circle cx="146" cy="417.2" r="4" fill="#38bdf8" stroke="#fff" stroke-width="1.5"/>
+  <rect x="180" y="340" width="165" height="42" fill="#1c2030" stroke="#2a3048" rx="6"/>
+  <text x="190" y="357" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Step 10 (Rapid Drop)</text>
+  <text x="190" y="373" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#f0f2f8">J₁₀ = 0.0102, ŷ₁₀ = 1.8571</text>
+
+  <!-- Asymptotic flattening annotation -->
+  <line x1="420" y1="360" x2="420" y2="415" stroke="#8b93a8" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <rect x="340" y="310" width="220" height="46" fill="#1c2030" stroke="#2a3048" rx="6"/>
+  <text x="350" y="328" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#22c55e">Asymptotic Flattening</text>
+  <text x="350" y="344" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#8b93a8">Gradients ~ (ŷ − y) vanish as ŷ → 2.0</text>
+</svg>

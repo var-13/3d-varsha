@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ThermoBench – Windows engineering workbench for thermal FEA, backpropagation, batch benchmarking and hardware simulation." />
+  <title>ThermoBench</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════ HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌡</span>
+        <span class="logo-text">ThermoBench</span>
+        <span class="logo-ver" id="version-badge">v0.1.0</span>
+      </div>
+      <p class="logo-sub">Engineering Workbench · Windows 11 x64</p>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════ TAB BAR -->
+  <nav class="tab-bar" role="tablist" aria-label="Main sections">
+    <button class="tab-btn active" role="tab" aria-selected="true"
+            aria-controls="tab-geometry"     id="btn-geometry"     data-tab="geometry">
+      <span class="tab-icon">📐</span> Geometry
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false"
+            aria-controls="tab-thermal"      id="btn-thermal"      data-tab="thermal">
+      <span class="tab-icon">🔥</span> Thermal Analysis
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false"
+            aria-controls="tab-performance"  id="btn-performance"  data-tab="performance">
+      <span class="tab-icon">⚡</span> Performance
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false"
+            aria-controls="tab-hardware"     id="btn-hardware"     data-tab="hardware">
+      <span class="tab-icon">🖥</span> Hardware
+    </button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════ TAB PANELS -->
+  <main class="tab-content">
+
+    <!-- ── GEOMETRY ──────────────────────────────────────────────── -->
+    <section id="tab-geometry" class="tab-panel active" role="tabpanel"
+             aria-labelledby="btn-geometry">
+      <div class="panel-header">
+        <h1>🧊 3-D Geometry &amp; FEA Thermal Point Cloud Viewer</h1>
+        <p class="panel-desc">Interactive Three.js WebGL viewport rendering synthetic CAD surface geometry (ASCII STL) alongside mapped ANSYS FEA nodal temperatures.</p>
+      </div>
+
+      <!-- Controls and Toolbar -->
+      <div class="card control-card">
+        <h2 class="card-title">🎮 3-D Viewport Controls &amp; Overlays</h2>
+        <div class="btn-group">
+          <button id="btn-toggle-mesh" class="btn btn-primary">Toggle STL Mesh (Solid/Wireframe)</button>
+          <button id="btn-toggle-nodes" class="btn btn-secondary">Toggle Point Cloud</button>
+          <button id="btn-reset-view" class="btn btn-outline">↺ Reset Camera</button>
+          <button id="btn-toggle-spin" class="btn btn-outline">▶ Auto-Rotate</button>
+          <a href="/api/geometry/stl_raw" download="sample.stl" class="btn btn-outline">⬇ Download STL</a>
+          <a href="/api/geometry/csv_raw" download="sample_ansys.csv" class="btn btn-outline">⬇ Download CSV</a>
+        </div>
+        <div id="geo-status" class="status-bar info">Initialising WebGL canvas... Drag to orbit, Right-click to pan, Scroll to zoom.</div>
+      </div>
+
+      <!-- KPI Metrics -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">CAD Facets (Triangles)</div>
+          <div class="kpi-value" id="kpi-geo-triangles">12</div>
+          <div class="kpi-sub" id="kpi-geo-name">heatsink_block</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Surface Area</div>
+          <div class="kpi-value highlight" id="kpi-geo-area">0.0070 m²</div>
+          <div class="kpi-sub">7,000 mm²</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Thermal FEA Nodes</div>
+          <div class="kpi-value" id="kpi-geo-nodes">65</div>
+          <div class="kpi-sub">Gaussian hotspot profile</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Temperature Range</div>
+          <div class="kpi-value" id="kpi-geo-trange">28.2 – 94.8 °C</div>
+          <div class="kpi-sub">Peak ΔT = 66.6 °C</div>
+        </div>
+      </div>
+
+      <!-- 3D Viewport and Node Inspector Container -->
+      <div class="geo-workspace">
+        <div class="viewport-card">
+          <div id="viewport-3d" class="viewport-canvas-container"></div>
+          <div class="viewport-overlay-legend">
+            <span class="legend-label">28 °C</span>
+            <div class="legend-bar"></div>
+            <span class="legend-label">95 °C</span>
+          </div>
+        </div>
+
+        <div class="card inspector-card">
+          <h2 class="card-title">🔍 Node Inspector</h2>
+          <div id="inspector-placeholder" class="text-muted">Click or hover over any colored FEA node in the 3-D viewport to inspect local thermal state.</div>
+          <div id="inspector-details" style="display: none;">
+            <div class="inspector-item"><span class="lbl">Node ID:</span> <span class="val highlight" id="insp-id">#18</span></div>
+            <div class="inspector-item"><span class="lbl">Temperature:</span> <span class="val" id="insp-temp">94.80 °C</span></div>
+            <div class="inspector-item"><span class="lbl">Coordinates:</span> <span class="val" id="insp-pos">(25.0, 25.0, 0.0) mm</span></div>
+            <div class="inspector-item"><span class="lbl">Heat Status:</span> <span class="badge" id="insp-badge">CRITICAL HOTSPOT</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── THERMAL ANALYSIS ──────────────────────────────────────── -->
+    <section id="tab-thermal" class="tab-panel" role="tabpanel"
+             aria-labelledby="btn-thermal">
+      <div class="panel-header">
+        <h1>Thermal FEA — 1-D Heat Conduction</h1>
+        <p class="panel-desc">
+          Steady-state heat conduction with internal heat source: 
+          <code>−d/dx(kA · dT/dx) = qA</code> on <code>[0, L]</code> with Dirichlet boundary conditions <code>T(0) = T₀</code>, <code>T(L) = T_L</code>.
+          Discretised with 2-node linear elements (C++17 Thomas algorithm solver).
+        </p>
+      </div>
+
+      <!-- Parameter controls card -->
+      <div class="card param-card">
+        <h2 class="card-title">⚙ Simulation Parameters</h2>
+        <div class="param-grid">
+          <div class="input-group">
+            <label for="inp-L">Domain Length L [m]</label>
+            <input type="number" id="inp-L" value="1.0" step="0.1" min="0.001">
+          </div>
+          <div class="input-group">
+            <label for="inp-A">Cross Section A [m²]</label>
+            <input type="number" id="inp-A" value="0.0001" step="0.00001" min="0.000001">
+          </div>
+          <div class="input-group">
+            <label for="inp-k">Thermal Conductivity k [W/(m·K)]</label>
+            <input type="number" id="inp-k" value="10.0" step="1" min="0.001">
+          </div>
+          <div class="input-group">
+            <label for="inp-q">Heat Generation q [W/m³]</label>
+            <input type="number" id="inp-q" value="10000.0" step="100">
+          </div>
+          <div class="input-group">
+            <label for="inp-T0">Boundary T(0) [°C]</label>
+            <input type="number" id="inp-T0" value="100.0" step="1">
+          </div>
+          <div class="input-group">
+            <label for="inp-TL">Boundary T(L) [°C]</label>
+            <input type="number" id="inp-TL" value="20.0" step="1">
+          </div>
+          <div class="input-group">
+            <label for="sel-N">Element Count N</label>
+            <select id="sel-N">
+              <option value="10" selected>N = 10 (h = 0.100 m)</option>
+              <option value="20">N = 20 (h = 0.050 m)</option>
+              <option value="40">N = 40 (h = 0.025 m)</option>
+              <option value="80">N = 80 (h = 0.0125 m)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-run-thermal" class="btn btn-primary">▶ Run FEA (Selected N)</button>
+          <button id="btn-run-convergence" class="btn btn-secondary">📊 Run All 4 Meshes (10, 20, 40, 80)</button>
+          <button id="btn-export-thermal-csv" class="btn btn-outline">⬇ Export CSV (Current N)</button>
+          <button id="btn-export-conv-csv" class="btn btn-outline">⬇ Export Convergence CSV</button>
+        </div>
+
+        <div id="thermal-status" class="status-bar info">Ready. Click 'Run FEA' or choose a mesh size.</div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Active Mesh Size N</div>
+          <div class="kpi-value" id="kpi-N">10</div>
+          <div class="kpi-sub" id="kpi-h">h = 0.1000 m</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Max Midpoint Error</div>
+          <div class="kpi-value highlight" id="kpi-mid-err">—</div>
+          <div class="kpi-sub" id="kpi-mid-expected">Expected: (q/2k)·(h/2)²</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Max Nodal Error</div>
+          <div class="kpi-value" id="kpi-node-err">—</div>
+          <div class="kpi-sub">Superconvergence &lt; 10⁻¹⁰ °C</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Observed Convergence Order</div>
+          <div class="kpi-value" id="kpi-order">—</div>
+          <div class="kpi-sub">Target: 2.00 (O(h²))</div>
+        </div>
+      </div>
+
+      <!-- Visualisation Charts Grid -->
+      <div class="charts-grid">
+        <div class="card chart-card">
+          <h2 class="card-title">📈 Temperature Distribution T(x) [°C] vs Position x [m]</h2>
+          <div class="chart-container">
+            <canvas id="chart-temperature"></canvas>
+          </div>
+        </div>
+        <div class="card chart-card">
+          <h2 class="card-title">📐 Mesh Convergence: Log-Log Error vs Grid Size h</h2>
+          <div class="chart-container">
+            <canvas id="chart-convergence"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Convergence Table Card -->
+      <div class="card table-card">
+        <h2 class="card-title">📋 4-Mesh Convergence Benchmark Table</h2>
+        <div class="table-responsive">
+          <table class="data-table" id="table-convergence">
+            <thead>
+              <tr>
+                <th>Mesh N</th>
+                <th>Element Size h [m]</th>
+                <th>Max Nodal Error [°C]</th>
+                <th>Max Midpoint Error [°C]</th>
+                <th>Theoretical Error [°C]</th>
+                <th>Error Ratio (e_{2h} / e_h)</th>
+                <th>Observed Order p</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-convergence">
+              <tr><td colspan="7" class="text-center text-muted">Click "Run All 4 Meshes" to populate convergence table.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── PERFORMANCE ───────────────────────────────────────────── -->
+    <section id="tab-performance" class="tab-panel" role="tabpanel"
+             aria-labelledby="btn-performance">
+      <div class="panel-header">
+        <h1>⚡ Multicore Batch Benchmark</h1>
+        <p class="panel-desc">Parallel finite element batch solver benchmark comparing bounded worker pools (1, 2, 4+ threads) against serial baseline with 100% numerical parity validation.</p>
+      </div>
+
+      <!-- Benchmark Configuration Card -->
+      <div class="card control-card">
+        <h2 class="card-title">⚙️ Benchmark Configuration</h2>
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="inp-perf-cases">Total Test Cases</label>
+            <input type="number" id="inp-perf-cases" value="200" step="50" min="10" max="2000">
+          </div>
+          <div class="input-group">
+            <label for="inp-perf-mesh">Mesh Elements N (per case)</label>
+            <input type="number" id="inp-perf-mesh" value="40" step="10" min="10" max="160">
+          </div>
+          <div class="input-group">
+            <label for="inp-perf-seed">RNG Seed (std::mt19937)</label>
+            <input type="number" id="inp-perf-seed" value="42" step="1" min="1">
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-run-benchmark" class="btn btn-primary">▶ Run Multicore Benchmark</button>
+          <button id="btn-export-bench-csv" class="btn btn-outline">⬇ Export Benchmark CSV</button>
+        </div>
+
+        <div id="perf-status" class="status-bar info">Ready. Click 'Run Multicore Benchmark' to measure speedup &amp; scaling.</div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Cases Evaluated</div>
+          <div class="kpi-value" id="kpi-perf-cases">200</div>
+          <div class="kpi-sub" id="kpi-perf-submesh">Mesh N = 40 (41 nodes/case)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Serial Baseline (1 Worker)</div>
+          <div class="kpi-value highlight" id="kpi-perf-baseline">—</div>
+          <div class="kpi-sub">Median of 5 runs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Max Speedup Achieved</div>
+          <div class="kpi-value" id="kpi-perf-speedup">—</div>
+          <div class="kpi-sub" id="kpi-perf-eff">Efficiency: —</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Numerical Parity vs Serial</div>
+          <div class="kpi-value" id="kpi-perf-parity">—</div>
+          <div class="kpi-sub" id="kpi-perf-discrepancy">Tolerance: &le; 10⁻⁸ °C</div>
+        </div>
+      </div>
+
+      <!-- Benchmark Charts Grid -->
+      <div class="charts-grid">
+        <div class="card chart-card">
+          <h2 class="card-title">🚀 Speedup Scaling vs Ideal Linear Scaling</h2>
+          <div class="chart-container">
+            <canvas id="chart-speedup"></canvas>
+          </div>
+        </div>
+        <div class="card chart-card">
+          <h2 class="card-title">⏱ Median Execution Latency [ms] vs Worker Count</h2>
+          <div class="chart-container">
+            <canvas id="chart-latency"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Benchmark Results Table -->
+      <div class="card table-card">
+        <h2 class="card-title">📊 Multi-Run Performance Summary (5 Measured Runs)</h2>
+        <div class="table-responsive">
+          <table class="data-table" id="table-benchmark">
+            <thead>
+              <tr>
+                <th>Workers (Threads)</th>
+                <th>Cases</th>
+                <th>Mesh N</th>
+                <th>Run 1 [ms]</th>
+                <th>Run 2 [ms]</th>
+                <th>Run 3 [ms]</th>
+                <th>Run 4 [ms]</th>
+                <th>Run 5 [ms]</th>
+                <th>Median [ms]</th>
+                <th>Speedup Sp</th>
+                <th>Efficiency Ep</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-benchmark">
+              <tr><td colspan="11" class="text-center text-muted">Click "Run Multicore Benchmark" to execute benchmark suite.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HARDWARE ───────────────────────────────────────────────── -->
+    <section id="tab-hardware" class="tab-panel" role="tabpanel"
+             aria-labelledby="btn-hardware">
+      <div class="panel-header">
+        <h1>🖥 Hardware Monitor <span class="badge-sim">SIMULATED</span></h1>
+        <p class="panel-desc">Mock embedded devices: STM32 MCU, Artix-7 FPGA, FTDI JTAG bridge. Stream live telemetry, inject faults, and test recovery — no real hardware needed.</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="card control-card">
+        <h2 class="card-title">⚙️ Device Controls</h2>
+        <div class="btn-group">
+          <button id="btn-hw-discover"  class="btn btn-primary">🔍 Discover Devices</button>
+          <button id="btn-hw-telemetry" class="btn btn-secondary">📡 Read All Telemetry</button>
+          <button id="btn-hw-reset"     class="btn btn-outline">↺ Reset All Devices</button>
+        </div>
+        <div id="hw-status" class="status-bar info">Click "Discover Devices" to initialise all mock adapters.</div>
+      </div>
+
+      <!-- Device Cards Row -->
+      <div class="kpi-grid" id="hw-device-cards">
+        <!-- filled by JS -->
+        <div class="kpi-card text-muted" style="grid-column:1/-1;text-align:center;padding:2rem;">
+          No devices discovered yet. Click "Discover Devices".
+        </div>
+      </div>
+
+      <!-- Live Telemetry Table -->
+      <div class="card table-card">
+        <h2 class="card-title">📊 Live Telemetry Stream</h2>
+        <div class="table-responsive">
+          <table class="data-table" id="table-hw-telemetry">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Type</th>
+                <th>State</th>
+                <th>Temp [°C]</th>
+                <th>Voltage [V]</th>
+                <th>Current [mA]</th>
+                <th>Power [mW]</th>
+                <th>Fault</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-hw">
+              <tr><td colspan="9" class="text-center text-muted">Run "Read All Telemetry" to populate.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Fault History Log -->
+      <div class="card table-card">
+        <h2 class="card-title">🚨 Fault &amp; Recovery Event Log</h2>
+        <div id="hw-event-log" style="font-family:monospace;font-size:0.82rem;color:#94a3b8;
+             background:#0f1422;border-radius:8px;padding:1rem;min-height:80px;max-height:200px;
+             overflow-y:auto;line-height:1.8;">
+          No events yet.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════ FOOTER -->
+  <footer class="app-footer">
+    ThermoBench · internship project · synthetic/open data only · no credentials stored
+  </footer>
+
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+  <script type="module" src="js/viewer3d.js"></script>
+</body>
+</html>

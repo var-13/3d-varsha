@@ -1,0 +1,499 @@
+/* ui/css/style.css
+   ThermoBench – dark-orange premium theme
+   Google Font: Inter (loaded locally in Phase 6; fallback: system-ui)
+*/
+
+/* ── Reset & Box Model ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  --bg-base:      #0d0f14;
+  --bg-surface:   #151820;
+  --bg-raised:    #1c2030;
+  --bg-hover:     #232840;
+
+  --accent:       #f97316;   /* orange-500 */
+  --accent-dim:   #c2540a;
+  --accent-glow:  rgba(249,115,22,.25);
+
+  --text-primary: #f0f2f8;
+  --text-muted:   #8b93a8;
+  --text-dim:     #50586e;
+
+  --border:       #2a3048;
+  --border-focus: #f97316;
+
+  --info-bg:    rgba(59,130,246,.12);
+  --info-text:  #93c5fd;
+  --warn-bg:    rgba(234,179,8,.12);
+  --warn-text:  #fde047;
+  --error-bg:   rgba(239,68,68,.12);
+  --error-text: #fca5a5;
+  --ok-bg:      rgba(34,197,94,.12);
+  --ok-text:    #86efac;
+
+  --radius:     10px;
+  --radius-lg:  16px;
+  --shadow:     0 4px 24px rgba(0,0,0,.5);
+  --transition: .18s ease;
+
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.app-header {
+  background: linear-gradient(135deg, #111420 0%, #1a1f35 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 2rem;
+  box-shadow: var(--shadow);
+}
+.header-inner { max-width: 1200px; margin: 0 auto; }
+
+.logo { display: flex; align-items: center; gap: .6rem; }
+.logo-icon { font-size: 1.75rem; }
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #f97316, #fb923c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-ver {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: .15rem .5rem;
+  border-radius: 99px;
+}
+.logo-sub {
+  font-size: .78rem;
+  color: var(--text-dim);
+  margin-top: .25rem;
+  letter-spacing: .04em;
+}
+
+/* ── Tab Bar ─────────────────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  gap: .25rem;
+  overflow-x: auto;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: .9rem;
+  font-weight: 500;
+  padding: .9rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition),
+              background var(--transition);
+}
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: linear-gradient(180deg, transparent 60%, var(--accent-glow) 100%);
+}
+.tab-icon { font-size: 1rem; }
+
+/* ── Tab Content ─────────────────────────────────────────────────────────── */
+.tab-content { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+.tab-panel { display: none; animation: fadein .2s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ── Panel Header ────────────────────────────────────────────────────────── */
+.panel-header { margin-bottom: 1.5rem; }
+.panel-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: .4rem;
+}
+.panel-desc { font-size: .88rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Status Bar ──────────────────────────────────────────────────────────── */
+.status-bar {
+  border-radius: var(--radius);
+  padding: .65rem 1rem;
+  font-size: .85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  border-left: 3px solid;
+}
+.status-bar.info  { background: var(--info-bg);  color: var(--info-text);  border-color: #3b82f6; }
+.status-bar.warn  { background: var(--warn-bg);  color: var(--warn-text);  border-color: #eab308; }
+.status-bar.error { background: var(--error-bg); color: var(--error-text); border-color: #ef4444; }
+.status-bar.ok    { background: var(--ok-bg);    color: var(--ok-text);    border-color: #22c55e; }
+
+/* ── Placeholder Viewport ────────────────────────────────────────────────── */
+.placeholder-view {
+  background: var(--bg-raised);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-dim);
+  font-size: .9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  letter-spacing: .03em;
+}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.badge-sim {
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid #eab30840;
+  padding: .15rem .5rem;
+  border-radius: 99px;
+  vertical-align: middle;
+  margin-left: .5rem;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.app-footer {
+  text-align: center;
+  font-size: .72rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding: .9rem;
+  background: var(--bg-surface);
+}
+
+/* ── Scrollbar (WebKit) ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+
+/* ── Cards & Layout ──────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Parameter Grid & Form Controls ───────────────────────────────────────── */
+.param-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.input-group input, .input-group select {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.input-group input:focus, .input-group select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #ea580c;
+  box-shadow: 0 2px 12px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+.btn-secondary:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.btn-outline:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+/* ── KPI Grid ─────────────────────────────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
+.kpi-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.kpi-value.highlight {
+  color: var(--accent);
+}
+
+.kpi-sub {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.35rem;
+}
+
+/* ── Charts Grid ─────────────────────────────────────────────────────────── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chart-card {
+  margin-bottom: 0;
+}
+
+.chart-container {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────── */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.data-table th {
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.03em;
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(42,48,72,.4);
+  color: var(--text-primary);
+}
+
+.data-table tr:hover td {
+  background: var(--bg-raised);
+}
+
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.text-success { color: #4ade80; }
+.text-danger { color: #f87171; }
+
+/* ── Geometry & 3D Viewport ──────────────────────────────────────────────── */
+.geo-workspace {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .geo-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+.viewport-card {
+  position: relative;
+  background: #090b10;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  height: 520px;
+}
+
+.viewport-canvas-container {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.viewport-canvas-container:active {
+  cursor: grabbing;
+}
+
+.viewport-overlay-legend {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.legend-bar {
+  width: 120px;
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #3b82f6, #06b6d4, #10b981, #facc15, #ef4444);
+}
+
+.inspector-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inspector-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(42, 48, 72, 0.4);
+}
+
+.inspector-item .lbl {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.inspector-item .val {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+
